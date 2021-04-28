@@ -1,0 +1,98 @@
+== Nim Chess 5
+:experimental:
+:imagesdir: http://ssalewski.de/tmp
+(c) Stefan Salewski +
+Version 0.6, 28-APR-2021
+
+Nim Chess 5 is a simple chess game written from scratch in Nim language with a basic GTK4 GUI.
+
+This is an experimental version, don't try to use it yet. If you really want to try use nim-chess4!  
+
+This is the fift version. While the first release was basically a test for the low level Nim GTK3 bindings, and
+the second release added a transposition table based on tables module from Nim's standard library,
+the third one uses a custom hash table. This restricts memory consumption drastically. Current version
+uses about 340 MB of RAM, so playing on older hardware is no problem any more. This fourth version
+usesd already the high level, gobject-introspection based GTK3 API. Chess engine is still identical with the
+third one but may change later. The GUI is still blocking for a few seconds when the computer is making
+its move. I think that is not a too serious restriction for now -- later I may add threading support
+or maybe run the engine as a separate process and using socket communication for GUI. Doing that is some
+work and not really interesting...
+
+This release has an engine with some modifications, which are not really tested and optimized yet, and the
+GUI will use GTK4 soon...
+
+=== Visual appearance
+
+image::nimchess_0.2.png[]
+
+=== Properties
+
+- written in Nim language
+- basic GTK3 GUI using high level API
+- only 1200 lines of code
+- move generation is based on an old gnuchess idea
+- core component is of course alpha-beta-prunning
+- a transposition table is used to reuse old results
+
+With a time limit of a few seconds per move computation is generally 7 ply deep
+full width, with additional full capture analyses (quiescence search).  Special moves
+like chess offers or captures are now deep extended, which should further increase
+playing strength, but I have not really verified that.
+In endgame
+deep of 10 ply and more is archived -- now even the most difficult endgame
+king vs king/bishop/knight is solved in few moves/seconds. And I have added a set based
+history to prevent engine from repeating old positions.
+
+Of course an opening library would increase playing strength, but I do not enjoy playing
+against a database too much, so I do not really intend to add one.
+
+The graphical user interface is very basic currently -- we play with white pieces against
+computer. No undo, no hints. For next game we have to restart the program.
+
+Maybe some day I will provide a more complete GUI. At least setting time limit and
+choosing side would be nice. That is really not much work, but not very interesting.
+
+Parallel computing would be interesting too, but the engine is strong already, and of
+course parallel computing would increase power consumption, so maybe it is not that
+useful.
+
+For this release we may need at least Nim v 0.17.1.
+
+=== Install
+
+For Linux:
+
+First install gintro, the gobject-introspection based high level GTK3 bindings
+
+https://github.com/StefanSalewski/gintro
+
+And then
+
+----
+git clone https://github.com/stefansalewski/nim-chess4
+cd nim-chess4
+nim c -d:release board.nim
+
+./board
+----
+
+The shipped nim.cfg file is this:
+
+----
+$ cat nim-chess3/nim.cfg 
+path:"$projectdir"
+nimcache:"/tmp/$projectdir"
+gcc.options.speed = "-march=native  -O3  -flto -fstrict-aliasing"
+----
+
+With gcc 6.3 this seems to generate the fastest executable with only 108 kB in size.
+You may try your own options -- and maybe do first built without -d:release flag
+to check for bugs.
+
+It may be possible to use it on Windows as well, for MacOSX installation
+seems to fail, as someone in Nim forum reported.
+
+The older nim-chess releases 1 and 2 are still available at https://github.com/ngtk3 -- I intend
+to delete them when this release is a bit more tested.
+
+

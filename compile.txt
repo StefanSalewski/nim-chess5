@@ -1,0 +1,3 @@
+nim c --cc:clang --gc:arc -d:useMalloc --passC:-flto --passL:"-flto" -d:danger board.nim
+
+nim c --cc:clang --gc:arc -d:useMalloc --passC:-flto --passL:"-flto -fuse-linker-plugin" -d:danger board.nim
